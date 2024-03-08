@@ -30,7 +30,9 @@ Build-urile pentru diferite sisteme de operare pot fi găsite în secțiunea [Re
 
 După instalarea dependențelor, puteți rula aplicația executând:
 
-`python main.py`
+```bash
+python rolink-activity.py
+```
 
 ## Contribuții
 
@@ -47,4 +49,4 @@ Contribuțiile sunt binevenite! Dacă doriți să contribuiți la acest proiect,
 Pentru întrebări sau suport, vă rugăm să deschideți o problemă în secțiunea Issues a repository-ului GitHub.
 
 ## Mulțumiri
-Mulțumiri speciale către [RoLink / YO6NAM](https://rolink.network) pentru crearea API-ului websocket necesar pentru această aplicație.
+Mulțumiri speciale către [YO6NAM @ RoLink](https://rolink.network) pentru crearea API-ului websocket necesar pentru această aplicație.
