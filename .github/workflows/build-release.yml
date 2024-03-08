@@ -14,12 +14,18 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-      - name: Install dependencies
+      - name: Install dependencies and certifi
         run: |
-          pip install pyinstaller websocket-client
-      - name: Build macOS Binary
+          pip install pyinstaller websocket-client certifi
+      - name: Locate certifi CA certificate bundle
+        id: certifi_location
         run: |
-          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.icns --name "RoLink Activity"
+          echo "CERTIFI_PATH=$(python -c 'import certifi; print(certifi.where())')" >> $GITHUB_ENV
+      - name: Build macOS Binary including CA certificate
+        run: |
+          pyinstaller --onefile --windowed --add-data "$CERTIFI_PATH:." ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.icns --name "RoLink Activity"
+        env:
+          CERTIFI_PATH: ${{ env.CERTIFI_PATH }}
       - name: Compress macOS Binary
         run: |
           zip -r RoLink-Activity-macOS.zip "RoLink Activity.app"
@@ -38,12 +44,18 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-      - name: Install dependencies
+      - name: Install dependencies and certifi
         run: |
-          pip install pyinstaller websocket-client
-      - name: Build Linux Binary
+          pip install pyinstaller websocket-client certifi
+      - name: Locate certifi CA certificate bundle for Linux
+        id: certifi_location_linux
         run: |
-          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.png --name "RoLink Activity"
+          echo "CERTIFI_PATH=$(python -c 'import certifi; print(certifi.where())')" >> $GITHUB_ENV
+      - name: Build Linux Binary including CA certificate
+        run: |
+          pyinstaller --onefile --windowed --add-data "$CERTIFI_PATH:." ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.png --name "RoLink Activity"
+        env:
+          CERTIFI_PATH: ${{ env.CERTIFI_PATH }}
       - name: Upload Linux Binary
         uses: actions/upload-artifact@v2
         with:
@@ -58,12 +70,18 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-      - name: Install dependencies
+      - name: Install dependencies and certifi
         run: |
-          pip install pyinstaller websocket-client
-      - name: Build Windows Binary
+          pip install pyinstaller websocket-client certifi
+      - name: Locate certifi CA certificate bundle for Windows
+        id: certifi_location_windows
         run: |
-          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.ico --name "RoLink Activity"
+          echo "CERTIFI_PATH=$(python -c 'import certifi; print(certifi.where()).replace("\\\\", "/")')" >> $GITHUB_ENV
+      - name: Build Windows Binary including CA certificate
+        run: |
+          pyinstaller --onefile --windowed --add-data "$CERTIFI_PATH;." ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.ico --name "RoLink Activity"
+        env:
+          CERTIFI_PATH: ${{ env.CERTIFI_PATH }}
       - name: Upload Windows Binary
         uses: actions/upload-artifact@v2
         with:
