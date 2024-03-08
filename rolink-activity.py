@@ -11,6 +11,8 @@ class TalkerGUI:
     def __init__(self, root):
         self.root = root
         self.talkers = []  # List to keep track of the latest 100 talkers
+        # Set a placeholder while waiting for the first talker
+        self.talkers.insert(0, "Așteptând vorbăreți 🎙️")
         self.root.title("RoLink Activity")
 
         # Font customization
@@ -62,6 +64,9 @@ class TalkerGUI:
         if is_current:
             # Mark the current talker with a red emoji
             talker_call_sign = "🔴 " + talker_call_sign
+
+            if "Așteptând vorbăreți 🎙️" in self.talkers:
+                self.talkers.remove("Așteptând vorbăreți 🎙️")
 
         # Remove the red emoji from all existing talkers in the list
         self.talkers = [call_sign.replace("🔴 ", "") for call_sign in self.talkers]
