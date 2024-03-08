@@ -8,6 +8,8 @@ from datetime import datetime
 import webbrowser
 import certifi
 import csv
+import os
+import sys
 
 
 def load_call_signs(filename):
@@ -21,11 +23,18 @@ def load_call_signs(filename):
     return call_signs
 
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
+
 class TalkerGUI:
     def __init__(self, root):
         self.root = root
         self.talkers = []  # List to keep track of the latest 100 talkers
-        self.call_signs = load_call_signs('callbook.csv')  # The callbook is publicly available here
+        callbook_path = resource_path('callbook.csv')  # Adjusted to use the resource_path function
+        self.call_signs = load_call_signs(callbook_path)  # Load call signs from file
         # https://www.ancom.ro/radioamatori_2899
         # Set a placeholder while waiting for the first talker
         self.talkers.insert(0, "Așteptând vorbăreți 🎙️")
