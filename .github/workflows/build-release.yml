@@ -20,11 +20,15 @@ jobs:
       - name: Build macOS Binary
         run: |
           pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.icns --name "RoLink Activity"
+      - name: Compress macOS Binary
+        run: |
+          zip -r RoLink-Activity-macOS.zip "RoLink Activity.app"
+        working-directory: dist
       - name: Upload macOS Binary
         uses: actions/upload-artifact@v2
         with:
-          name: RoLink-Activity-macOS
-          path: dist/RoLink Activity
+          name: RoLink-Activity-macOS-app
+          path: dist/RoLink-Activity-macOS.zip
 
   build-linux:
     runs-on: ubuntu-latest
@@ -88,9 +92,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./RoLink-Activity-macOS/RoLink Activity
-          asset_name: RoLink-Activity-macOS
-          asset_content_type: application/octet-stream
+          asset_path: ./RoLink-Activity-macOS-app/RoLink-Activity-macOS.zip
+          asset_name: RoLink-Activity-macOS.zip
+          asset_content_type: application/zip
       - name: Upload Release Asset (Linux)
         uses: actions/upload-release-asset@v1
         env:
@@ -107,5 +111,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./RoLink-Activity-Windows/RoLink Activity.exe
-          asset_name: RoLink-Activity-Windows
+          asset_name: RoLink-Activity-Windows.exe
           asset_content_type: application/octet-stream
