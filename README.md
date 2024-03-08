@@ -14,7 +14,7 @@ Utilizând tehnologia WebSocket pentru comunicarea în timp real, această aplic
 -   Conectare în timp real la serviciul RoLink folosind WebSocket.
 -   Afișarea ultimilor 100 vorbitori activi, cu evidențierea vorbitorului curent.
 -   Interfață simplă și intuitivă, ușor de utilizat.
-
+-   Afișarea Nume Vorbitorilor:** Pe lângă indicativul radio, aplicația acum extrage și afișează numele vorbitorilor, facilitând identificarea persoanelor din rețea.
 
 ## Instalare
 

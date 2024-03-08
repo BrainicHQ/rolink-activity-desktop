@@ -7,12 +7,26 @@ import threading
 from datetime import datetime
 import webbrowser
 import certifi
+import csv
+
+
+def load_call_signs(filename):
+    call_signs = {}
+    with open(filename, newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=';')
+        for row in reader:
+            if len(row) == 2:
+                call_sign, name = row
+                call_signs[call_sign] = name
+    return call_signs
 
 
 class TalkerGUI:
     def __init__(self, root):
         self.root = root
         self.talkers = []  # List to keep track of the latest 100 talkers
+        self.call_signs = load_call_signs('callbook.csv')  # The callbook is publicly available here
+        # https://www.ancom.ro/radioamatori_2899
         # Set a placeholder while waiting for the first talker
         self.talkers.insert(0, "Așteptând vorbăreți 🎙️")
         self.root.title("RoLink Activity")
@@ -29,7 +43,8 @@ class TalkerGUI:
         self.footer_frame.pack(fill=tk.X, side=tk.BOTTOM, pady=5)
 
         # Clickable copyright label
-        self.copyright_label = tk.Label(self.footer_frame, text="© 2024 Brainic.io", fg="blue", cursor="hand2",
+        self.copyright_label = tk.Label(self.footer_frame, text="© 2024 Silviu - Brainic.io", fg="darkgray",
+                                        cursor="hand2",
                                         anchor="center")
 
         def open_link(event):
@@ -57,11 +72,57 @@ class TalkerGUI:
         y = 0
         self.root.geometry(f'{width}x{height}+{x}+{y}')
 
+    @staticmethod
+    def format_name(full_name):
+        """
+        Formats the name by extracting the first given name and handling special cases.
+
+        If the name is "DATE PERSONALE", it's considered private, and an empty string is returned.
+        For names with compound family names (separated by a hyphen) followed by given names,
+        or names in the format "Family Name Given Name(s)", this method attempts to return
+        only the first given name, handling compound names appropriately.
+
+        :param full_name: The full name to format.
+        :return: The formatted name or an empty string for private names.
+        """
+        if full_name == "DATE PERSONALE":
+            return "🕵🏻"  # Private name
+        else:
+            name_parts = full_name.split()
+
+            # Early return for names that do not follow the expected format
+            if not name_parts:
+                return "📡"  # Probably a repeater or a gateway
+
+            # Find the index for the first given name
+            first_name_index = 1 if len(name_parts) > 1 else 0
+
+            # Adjust for compound family names
+            if '-' in name_parts[0] and len(name_parts) > 2:
+                first_name_index = 2
+
+            # Select the first given name based on the determined index
+            first_name = name_parts[first_name_index]
+
+            # Check if the first name is compound and split it if necessary
+            if '-' in first_name:
+                first_name_parts = first_name.split('-')
+                first_name = first_name_parts[0]  # Take the first part of the compound first name
+
+            return first_name
+
     def update_talkers(self, talker_data):
         talker_call_sign = talker_data.get('c')
         is_current = talker_data.get('t') == 1
         timestamp_ms = talker_data.get('s', 0)
         timestamp = datetime.fromtimestamp(timestamp_ms / 1000).strftime('%H:%M:%S')
+
+        # Extract the base call sign without any suffix
+        base_call_sign = talker_call_sign.split('-')[0]
+
+        # Lookup the name using the base call sign
+        full_name = self.call_signs.get(base_call_sign, "")
+        talker_name = self.format_name(full_name)
 
         if is_current:
             # Mark the current talker with a red emoji
@@ -75,15 +136,16 @@ class TalkerGUI:
 
         # Insert the talker only if they are the current talker, including their active time as a talker
         if is_current:
-            self.talkers.insert(0, talker_call_sign + f" ({timestamp})")
+            # Include the name in the display
+            display_text = f"{talker_call_sign} ({talker_name}) ({timestamp})"
+            self.talkers.insert(0, display_text)
 
         # Keep only the latest 100 talkers
         self.talkers = self.talkers[:100]
 
-        # Update the Listbox with the list of talkers
-        self.listbox.delete(0, tk.END)  # Clear existing entries
+        self.listbox.delete(0, tk.END)
         for talker in self.talkers:
-            self.listbox.insert(tk.END, talker)  # Insert updated list of talkers
+            self.listbox.insert(tk.END, talker)
         self.root.update_idletasks()
 
 
@@ -121,8 +183,10 @@ if __name__ == "__main__":
                                     on_error=on_error,
                                     on_close=on_close)
 
+
     def start_websocket():
         ws_app.run_forever(sslopt={"cert_reqs": ssl.CERT_REQUIRED, "ca_certs": certifi.where()})
+
 
     ws_thread = threading.Thread(target=start_websocket)
     ws_thread.daemon = True
