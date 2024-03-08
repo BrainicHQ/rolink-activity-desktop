@@ -19,7 +19,7 @@ jobs:
           pip install pyinstaller websocket-client certifi
       - name: Build macOS Binary
         run: |
-          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.icns --name "RoLink Activity"
+          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.icns --name "RoLink Activity" --add-data "${{ github.workspace }}/callbook.csv:."
       - name: Compress macOS Binary
         run: |
           zip -r RoLink-Activity-macOS.zip "RoLink Activity.app"
@@ -43,7 +43,7 @@ jobs:
           pip install pyinstaller websocket-client certifi
       - name: Build Linux Binary
         run: |
-          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.png --name "RoLink Activity"
+          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.png --name "RoLink Activity" --add-data "${{ github.workspace }}/callbook.csv:."
       - name: Upload Linux Binary
         uses: actions/upload-artifact@v2
         with:
@@ -63,7 +63,7 @@ jobs:
           pip install pyinstaller websocket-client certifi
       - name: Build Windows Binary
         run: |
-          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.ico --name "RoLink Activity"
+          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.ico --name "RoLink Activity" --add-data "${{ github.workspace }}/callbook.csv:."
       - name: Upload Windows Binary
         uses: actions/upload-artifact@v2
         with:
