@@ -62,7 +62,7 @@ jobs:
           name: RoLink-Activity-Linux
           path: dist/RoLink Activity
 
-    build-windows:
+  build-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
