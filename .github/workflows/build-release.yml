@@ -16,7 +16,7 @@ jobs:
           python-version: '3.x'
       - name: Install dependencies
         run: |
-          pip install pyinstaller websocket-client
+          pip install pyinstaller websocket-client certifi
       - name: Build macOS Binary
         run: |
           pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.icns --name "RoLink Activity"
@@ -40,7 +40,7 @@ jobs:
           python-version: '3.x'
       - name: Install dependencies
         run: |
-          pip install pyinstaller websocket-client
+          pip install pyinstaller websocket-client certifi
       - name: Build Linux Binary
         run: |
           pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.png --name "RoLink Activity"
@@ -60,7 +60,7 @@ jobs:
           python-version: '3.x'
       - name: Install dependencies
         run: |
-          pip install pyinstaller websocket-client
+          pip install pyinstaller websocket-client certifi
       - name: Build Windows Binary
         run: |
           pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.ico --name "RoLink Activity"
