@@ -7,7 +7,7 @@
 
 Utilizând tehnologia WebSocket pentru comunicarea în timp real, această aplicație vă permite să vedeți ultimii vorbitori activi în rețea, marcându-i pe cei actuali cu un indicator vizual distinct.
 
-![Preview of RoLink Activity](preview.jpg)
+[<img src="preview.jpg" height="400px"/>](preview.jpg)
 
 ## Funcționalități
 
