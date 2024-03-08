@@ -98,7 +98,7 @@ def on_error(ws, error):
     print(f"Error: {error}")
 
 
-def on_close(ws):
+def on_close(ws, close_status_code, close_msg):
     print("### closed ###")
 
 
