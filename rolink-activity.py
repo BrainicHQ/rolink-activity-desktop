@@ -10,7 +10,7 @@ import webbrowser
 class TalkerGUI:
     def __init__(self, root):
         self.root = root
-        self.talkers = []  # List to keep track of the latest 5 talkers
+        self.talkers = []  # List to keep track of the latest 100 talkers
         self.root.title("RoLink Activity")
 
         # Font customization

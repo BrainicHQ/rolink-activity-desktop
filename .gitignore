@@ -1,1 +1,5 @@
 /dist/
+/build/
+/ro.spec
+/RoLink Activity.spec
+/rolink-activity.spec
