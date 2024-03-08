@@ -62,7 +62,7 @@ jobs:
           name: RoLink-Activity-Linux
           path: dist/RoLink Activity
 
-  build-windows:
+    build-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
@@ -74,9 +74,10 @@ jobs:
         run: |
           pip install pyinstaller websocket-client certifi
       - name: Locate certifi CA certificate bundle for Windows
-        id: certifi_location_windows
         run: |
-          echo "CERTIFI_PATH=$(python -c 'import certifi; print(certifi.where()).replace("\\\\", "/")')" >> $GITHUB_ENV
+          $certifiPath = python -c "import certifi; print(certifi.where())"
+          echo "CERTIFI_PATH=$certifiPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        shell: powershell
       - name: Build Windows Binary including CA certificate
         run: |
           pyinstaller --onefile --windowed --add-data "$CERTIFI_PATH;." ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.ico --name "RoLink Activity"
