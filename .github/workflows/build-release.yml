@@ -19,7 +19,7 @@ jobs:
           pip install pyinstaller websocket-client
       - name: Build macOS Binary
         run: |
-          pyinstaller --onefile --hidden-import=websocket --hidden-import=websocket._app --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.icns --name "RoLink Activity"
+          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.icns --name "RoLink Activity"
       - name: Compress macOS Binary
         run: |
           zip -r RoLink-Activity-macOS.zip "RoLink Activity.app"
@@ -43,7 +43,7 @@ jobs:
           pip install pyinstaller websocket-client
       - name: Build Linux Binary
         run: |
-          pyinstaller --onefile -hidden-import=websocket --hidden-import=websocket._app --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.png --name "RoLink Activity"
+          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.png --name "RoLink Activity"
       - name: Upload Linux Binary
         uses: actions/upload-artifact@v2
         with:
@@ -63,7 +63,7 @@ jobs:
           pip install pyinstaller websocket-client
       - name: Build Windows Binary
         run: |
-          pyinstaller --onefile -hidden-import=websocket --hidden-import=websocket._app --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.ico --name "RoLink Activity"
+          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.ico --name "RoLink Activity"
       - name: Upload Windows Binary
         uses: actions/upload-artifact@v2
         with:
