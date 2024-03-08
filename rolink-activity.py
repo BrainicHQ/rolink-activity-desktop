@@ -1,3 +1,4 @@
+import ssl
 import tkinter as tk
 from tkinter import font as tkFont  # For font customization
 import websocket
@@ -5,14 +6,7 @@ import json
 import threading
 from datetime import datetime
 import webbrowser
-import ssl
-
-try:
-    _create_unverified_https_context = ssl._create_unverified_context
-except AttributeError:
-    pass
-else:
-    ssl._create_default_https_context = _create_unverified_https_context
+import certifi
 
 
 class TalkerGUI:
@@ -126,7 +120,11 @@ if __name__ == "__main__":
                                     on_message=lambda ws, msg: on_message(ws, msg, gui),
                                     on_error=on_error,
                                     on_close=on_close)
-    ws_thread = threading.Thread(target=ws_app.run_forever)
+
+    def start_websocket():
+        ws_app.run_forever(sslopt={"cert_reqs": ssl.CERT_REQUIRED, "ca_certs": certifi.where()})
+
+    ws_thread = threading.Thread(target=start_websocket)
     ws_thread.daemon = True
     ws_thread.start()
 
