@@ -93,7 +93,7 @@ def prompt_for_update(latest_version, download_url):
 
 def load_call_signs(filename):
     call_signs = {}
-    with open(filename, newline='') as csvfile:
+    with open(filename, newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile, delimiter=';')
         for row in reader:
             if len(row) == 2:
