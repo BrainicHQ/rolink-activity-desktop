@@ -1,6 +1,7 @@
 import ssl
 import tkinter as tk
 from tkinter import font as tkFont  # For font customization
+from tkinter import messagebox
 import websocket
 import json
 import threading
@@ -10,6 +11,64 @@ import certifi
 import csv
 import os
 import sys
+import requests
+
+current_version = "0.0.5"  # Update this with each new release
+
+
+def version_greater_than(v1, v2):
+    """
+    Compare two version strings, considering the format 'v.x.x.x', and determine if v1 is greater than v2.
+
+    :param v1: str, the first version string (e.g., "v.0.0.1").
+    :param v2: str, the second version string (e.g., "v.0.0.2").
+    :return: bool, True if v1 is greater than v2, False otherwise.
+    """
+    # Strip the leading 'v.' and split the version strings into components
+    v1_numbers = [int(num) for num in v1.lstrip('v.').split('.')]
+    v2_numbers = [int(num) for num in v2.lstrip('v.').split('.')]
+
+    # Zip the version components for pairwise comparison
+    for v1_part, v2_part in zip(v1_numbers, v2_numbers):
+        if v1_part > v2_part:
+            return True
+        elif v1_part < v2_part:
+            return False
+
+    # In case all compared components are equal, check if v1 has more numerical components than v2
+    return len(v1_numbers) > len(v2_numbers)
+
+
+def check_for_updates(current_version, root):
+    """
+    Check GitHub for the latest release version of the app, considering the specific versioning format 'v.x.x.x'.
+    Uses the root Tkinter object to safely interact with the GUI from a background thread.
+    :param current_version: str, The current version of the app.
+    :param root: Tk root window, used for scheduling GUI updates.
+    """
+    try:
+        api_url = "https://api.github.com/repos/BrainicHQ/rolink-activity-desktop/releases/latest"
+        response = requests.get(api_url)
+        response.raise_for_status()  # Raises stored HTTPError, if one occurred.
+
+        latest_version = response.json()['tag_name']
+        if version_greater_than(latest_version, current_version):
+            # Schedule the prompt to run in the main thread
+            root.after(0, prompt_for_update, latest_version, response.json()['html_url'])
+    except Exception as e:
+        print(f"Failed to check for updates: {e}")
+
+
+def prompt_for_update(latest_version, download_url):
+    """
+    Prompt the user to download the latest version of the app.
+    :param latest_version: str, The latest version available for download.
+    :param download_url: str, The URL to download the new version.
+    """
+    update_message = (f"Versiunea {latest_version} este disponibilă. Tu ai {current_version}. Vrei să descarci noua "
+                      f"versiune?")
+    if tk.messagebox.askyesno("Versiune nouă", update_message):
+        webbrowser.open_new(download_url)
 
 
 def load_call_signs(filename):
@@ -201,4 +260,5 @@ if __name__ == "__main__":
     ws_thread.daemon = True
     ws_thread.start()
 
+    check_for_updates(current_version, root)
     root.mainloop()
