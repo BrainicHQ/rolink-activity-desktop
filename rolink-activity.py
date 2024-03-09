@@ -13,7 +13,7 @@ import os
 import sys
 import requests
 
-current_version = "0.0.5"  # Update this with each new release
+current_version = "0.0.6"  # Update this with each new release
 
 
 def version_greater_than(v1, v2):
@@ -57,6 +57,26 @@ def check_for_updates(current_version, root):
             root.after(0, prompt_for_update, latest_version, response.json()['html_url'])
     except Exception as e:
         print(f"Failed to check for updates: {e}")
+
+
+def get_name_by_api(callsign):
+    """
+        Get the name of the user by callsign by API.
+
+        :param callsign: The callsign to look up.
+        :return: The name of the user or an empty string if not found.
+        """
+    # If the talker name is not found call the API https://rolink-qrz-cs.silviu.workers.dev/?callsign= and try to
+    # get the `fname` from the JSON response. If any error occurs do not throw any error.
+    try:
+        response = requests.get(f"https://rolink-qrz-cs.silviu.workers.dev/?callsign={callsign}")
+        response_json = response.json()
+        if response_json.get("fname"):
+            talker_name = response_json.get("fname")
+            return talker_name
+    except Exception as e:
+        print(f"Error getting name by API: {e}")
+        return ""
 
 
 def prompt_for_update(latest_version, download_url):
@@ -141,7 +161,7 @@ class TalkerGUI:
         self.root.geometry(f'{width}x{height}+{x}+{y}')
 
     @staticmethod
-    def format_name(full_name):
+    def format_name(full_name, call_sign):
         """
         Formats the name by extracting the first given name and handling special cases.
 
@@ -150,17 +170,20 @@ class TalkerGUI:
         or names in the format "Family Name Given Name(s)", this method attempts to return
         only the first given name, handling compound names appropriately.
 
+        :param call_sign: The call sign to use for the API lookup.
         :param full_name: The full name to format.
         :return: The formatted name or an empty string for private names.
         """
         if full_name == "DATE PERSONALE":
-            return "🕵🏻"  # Private name
+            return get_name_by_api(call_sign) or "🕵🏻"  # Return the name from the API or a detective emoji (private)
         else:
             name_parts = full_name.split()
 
             # Early return for names that do not follow the expected format
             if not name_parts:
-                return "📡"  # Probably a repeater or a gateway
+                return get_name_by_api(
+                    call_sign) or "📡"  # Return the name from the API or a satellite emoji (probably a repeater or a
+                # gateway)
 
             # Find the index for the first given name
             first_name_index = 1 if len(name_parts) > 1 else 0
@@ -190,7 +213,7 @@ class TalkerGUI:
 
         # Lookup the name using the base call sign
         full_name = self.call_signs.get(base_call_sign, "")
-        talker_name = self.format_name(full_name)
+        talker_name = self.format_name(full_name, base_call_sign)
 
         if is_current:
             # Mark the current talker with a red emoji
