@@ -2,7 +2,7 @@
 
 ## Despre
 
-**RoLink Activity Desktop** este o aplicație desktop ce rulează în foreground care se conectează la
+**RoLink Activity Desktop** este o aplicație desktop ce rulează în foreground (rămâne în prim-plan mereu, în fața altor aplicații) care se conectează la
 serviciul [RoLink](https://rolink.network) pentru a monitoriza și afișa activitatea în timp real a vorbitorilor pentru a
 vă ajuta să știți cu cine comunicați în timp ce lucrați la PC.
 
