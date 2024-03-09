@@ -12,8 +12,9 @@ import csv
 import os
 import sys
 import requests
+import re
 
-current_version = "0.0.6"  # Update this with each new release
+current_version = "0.0.7"  # Update this with each new release
 
 
 def version_greater_than(v1, v2):
@@ -61,22 +62,31 @@ def check_for_updates(current_version, root):
 
 def get_name_by_api(callsign):
     """
-        Get the name of the user by callsign by API.
+    Get the name of the user by callsign by API.
 
-        :param callsign: The callsign to look up.
-        :return: The name of the user or an empty string if not found.
-        """
-    # If the talker name is not found call the API https://rolink-qrz-cs.silviu.workers.dev/?callsign= and try to
-    # get the `fname` from the JSON response. If any error occurs do not throw any error.
+    :param callsign: The callsign to look up.
+    :return: The name of the user or an empty string if not found.
+    """
+    # Define the regex pattern for HAM call signs
+    call_sign_pattern = re.compile(r'^[A-Za-z]{1,2}\d[A-Za-z]{1,3}$')
+
+    # Check if the callsign matches the HAM call sign pattern
+    if not call_sign_pattern.match(callsign):
+        print(f"Invalid callsign format: {callsign}")
+        return ""
+
+    # If the callsign is valid, proceed with the API request
     try:
         response = requests.get(f"https://rolink-qrz-cs.silviu.workers.dev/?callsign={callsign}")
         response_json = response.json()
         if response_json.get("fname"):
             talker_name = response_json.get("fname")
             return talker_name
+        else:
+            return ""  # Return an empty string if 'fname' is not in the response
     except Exception as e:
         print(f"Error getting name by API: {e}")
-        return ""
+        return ""  # Return an empty string if any error occurs
 
 
 def prompt_for_update(latest_version, download_url):
