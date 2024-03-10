@@ -134,7 +134,7 @@ class TalkerGUI:
 
         # Create a Listbox to display talkers
         self.listbox = tk.Listbox(root, height=10, width=40, font=self.customFont)
-        self.listbox.pack(padx=5, pady=5)
+        self.listbox.pack(padx=5, pady=5, fill=tk.BOTH, expand=True)
 
         # Footer
         self.footer_frame = tk.Frame(root)
