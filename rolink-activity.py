@@ -13,8 +13,9 @@ import os
 import sys
 import requests
 import re
+import time
 
-current_version = "0.0.7"  # Update this with each new release
+current_version = "0.0.8"  # Update this with each new release
 
 
 def version_greater_than(v1, v2):
@@ -72,7 +73,6 @@ def get_name_by_api(callsign):
 
     # Check if the callsign matches the HAM call sign pattern
     if not call_sign_pattern.match(callsign):
-        print(f"Invalid callsign format: {callsign}")
         return ""
 
     # If the callsign is valid, proceed with the API request
@@ -127,7 +127,7 @@ class TalkerGUI:
         # https://www.ancom.ro/radioamatori_2899
         # Set a placeholder while waiting for the first talker
         self.talkers.insert(0, "Așteptând vorbăreți 🎙️")
-        self.root.title("RoLink Activity")
+        self.root.title(f"RoLink Activity - v{current_version}")
 
         # Font customization
         self.customFont = tkFont.Font(family="Helvetica", size=14)
@@ -265,6 +265,14 @@ def on_error(ws, error):
 
 def on_close(ws, close_status_code, close_msg):
     print("### closed ###")
+    # Implement a reconnection strategy with backoff
+    for attempt in range(5):  # Try to reconnect a few times
+        time.sleep(10 * (attempt + 1))  # Increasing delay
+        try:
+            start_websocket()
+            break  # Exit the loop if successful
+        except Exception as e:
+            print(f"Reconnection attempt {attempt + 1} failed: {e}")
 
 
 def on_open(ws, gui):
