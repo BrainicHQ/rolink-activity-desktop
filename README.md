@@ -9,7 +9,7 @@ vă ajuta să știți cu cine comunicați în timp ce lucrați la PC.
 Utilizând tehnologia WebSocket pentru comunicarea în timp real, această aplicație vă permite să vedeți ultimii vorbitori
 activi în rețea, marcându-i pe cei actuali cu un indicator vizual distinct.
 
-[<img src="preview.jpg" width="50%"/>](preview.jpg)
+[<img src="preview.jpg" width="70%"/>](preview.jpg)
 
 ## Funcționalități
 
