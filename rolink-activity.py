@@ -294,7 +294,10 @@ if __name__ == "__main__":
 
 
     def start_websocket():
-        ws_app.run_forever(sslopt={"cert_reqs": ssl.CERT_REQUIRED, "ca_certs": certifi.where()})
+        ws_app.run_forever(sslopt={"cert_reqs": ssl.CERT_REQUIRED, "ca_certs": certifi.where()},
+                           ping_interval=10,
+                           ping_timeout=2,
+                           reconnect=5)
 
 
     ws_thread = threading.Thread(target=start_websocket)
