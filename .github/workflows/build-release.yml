@@ -69,13 +69,34 @@ jobs:
         with:
           name: RoLink-Activity-Windows
           path: dist/RoLink Activity.exe
+  build-windows-7:
+    runs-on: windows-latest
+    name: Build for Windows 7 (Python 3.8.18)
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.8.18
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8.18'
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller websocket-client certifi requests
+      - name: Build Windows 7 Binary
+        run: |
+          pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.ico --name "RoLink Activity Win7" --add-data "${{ github.workspace }}/callbook.csv:."
+      - name: Upload Windows 7 Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: RoLink-Activity-Windows7
+          path: dist/RoLink Activity Win7.exe
+
 
   create-release:
-    needs: [build-macos, build-linux, build-windows]
+    needs: [build-macos, build-linux, build-windows, build-windows-7]
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -112,4 +133,13 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./RoLink-Activity-Windows/RoLink Activity.exe
           asset_name: RoLink-Activity-Windows.exe
+          asset_content_type: application/octet-stream
+      - name: Upload Release Asset (Windows 7)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./RoLink-Activity-Windows7/RoLink Activity Win7.exe
+          asset_name: RoLink-Activity-Windows7.exe
           asset_content_type: application/octet-stream
