@@ -210,7 +210,7 @@ class TalkerGUI:
                 first_name_parts = first_name.split('-')
                 first_name = first_name_parts[0]  # Take the first part of the compound first name
 
-            return first_name
+            return first_name.capitalize()
 
     def update_talkers(self, talker_data):
         talker_call_sign = talker_data.get('c')
