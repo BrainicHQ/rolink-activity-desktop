@@ -9,9 +9,9 @@ jobs:
   build-macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
       - name: Install dependencies
@@ -25,7 +25,7 @@ jobs:
           zip -r RoLink-Activity-macOS.zip "RoLink Activity.app"
         working-directory: dist
       - name: Upload macOS Binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: RoLink-Activity-macOS-app
           path: dist/RoLink-Activity-macOS.zip
@@ -33,9 +33,9 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
       - name: Install dependencies
@@ -45,7 +45,7 @@ jobs:
         run: |
           pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.png --name "RoLink Activity" --add-data "${{ github.workspace }}/callbook.csv:."
       - name: Upload Linux Binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: RoLink-Activity-Linux
           path: dist/RoLink Activity
@@ -53,9 +53,9 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
       - name: Install dependencies
@@ -65,7 +65,7 @@ jobs:
         run: |
           pyinstaller --onefile --windowed ${{ github.workspace }}/rolink-activity.py --icon=${{ github.workspace }}/icon.ico --name "RoLink Activity" --add-data "${{ github.workspace }}/callbook.csv:."
       - name: Upload Windows Binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: RoLink-Activity-Windows
           path: dist/RoLink Activity.exe
