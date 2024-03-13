@@ -27,18 +27,14 @@ secțiunea [Releases](https://github.com/BrainicHQ/rolink-activity-desktop/relea
 
 ### Descărcare Directă
 
+Pentru a descărca direct aplicația, faceți click pe link-ul corespunzător sistemului de operare:
+
 - [MacOS](https://github.com/BrainicHQ/rolink-activity-desktop/releases/latest/download/RoLink-Activity-macOS.zip) 🍎
 - [Windows](https://github.com/BrainicHQ/rolink-activity-desktop/releases/latest/download/RoLink-Activity-Windows.exe)
   🖥️
+  - [Windows 7](https://github.com/BrainicHQ/rolink-activity-desktop/releases/latest/download/RoLink-Activity-Windows7.exe)
+    📜 🖥️
 - [Linux](https://github.com/BrainicHQ/rolink-activity-desktop/releases/latest/download/RoLink-Activity-Linux) 🐧
-
-## Rulare
-
-După instalarea dependențelor, puteți rula aplicația executând:
-
-```bash
-python rolink-activity.py
-```
 
 ## Contribuții
 
