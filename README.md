@@ -20,7 +20,7 @@ activi în rețea, marcându-i pe cei actuali cu un indicator vizual distinct.
   provenit din [callbook-ul oferit de ANCOM](https://www.ancom.ro/radioamatori_2899); sau dacă acolo nu este găsit, din
   serviciul QRZ.com, facilitând identificarea persoanelor din rețea.
 
-## Instalare
+## Rulare
 
 Build-urile pentru diferite sisteme de operare pot fi găsite în
 secțiunea [Releases](https://github.com/BrainicHQ/rolink-activity-desktop/releases) a repository-ului GitHub.
