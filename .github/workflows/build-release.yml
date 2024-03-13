@@ -71,13 +71,13 @@ jobs:
           path: dist/RoLink Activity.exe
   build-windows-7:
     runs-on: windows-2019
-    name: Build for Windows 7 (Python 3.8.18)
+    name: Build for Windows 7 (Python 3.8.10)
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python 3.8.18
+      - name: Set up Python 3.8.10
         uses: actions/setup-python@v5
         with:
-          python-version: '3.8.18'
+          python-version: '3.8.10'
       - name: Install dependencies
         run: |
           pip install pyinstaller websocket-client certifi requests
