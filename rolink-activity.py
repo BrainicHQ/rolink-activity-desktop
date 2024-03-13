@@ -124,6 +124,7 @@ class TalkerGUI:
         self.talkers = []  # List to keep track of the latest 100 talkers
         callbook_path = resource_path('callbook.csv')  # Adjusted to use the resource_path function
         self.call_signs = load_call_signs(callbook_path)  # Load call signs from file
+        self.last_zello_call_sign = None # Keep track of the last Zello call sign for ZelloLink
         # https://www.ancom.ro/radioamatori_2899
         # Set a placeholder while waiting for the first talker
         self.talkers.insert(0, "Așteptând vorbăreți 🎙️")
@@ -218,8 +219,13 @@ class TalkerGUI:
         timestamp_ms = talker_data.get('s', 0)
         timestamp = datetime.fromtimestamp(timestamp_ms / 1000).strftime('%H:%M:%S')
 
-        # Extract the base call sign without any suffix
-        base_call_sign = talker_call_sign.split('-')[0]
+        # If the talker is ZelloLink, use the last Zello callsign
+        if talker_call_sign == "ZelloLink" and self.last_zello_call_sign:
+            base_call_sign = self.last_zello_call_sign.split('-')[0]
+            # Reset the last Zello call sign
+            self.last_zello_call_sign = None
+        else:
+            base_call_sign = talker_call_sign.split('-')[0]
 
         # Lookup the name using the base call sign
         full_name = self.call_signs.get(base_call_sign, "")
@@ -255,6 +261,8 @@ def on_message(ws, message, gui):
         data = json.loads(message)
         if "talker" in data:
             gui.update_talkers(data['talker'])
+        elif "zello" in data and data["zello"].get("command") == "on_stream_start":
+            gui.last_zello_call_sign = data["zello"].get("from")
     except Exception as e:
         print(f"Error processing message: {e}")
 
