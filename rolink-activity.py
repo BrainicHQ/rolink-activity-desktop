@@ -15,7 +15,7 @@ import requests
 import re
 import time
 
-current_version = "0.0.9"  # Update this with each new release
+current_version = "0.0.10"  # Update this with each new release
 
 
 def version_greater_than(v1, v2):
