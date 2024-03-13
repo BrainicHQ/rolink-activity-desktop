@@ -70,7 +70,7 @@ jobs:
           name: RoLink-Activity-Windows
           path: dist/RoLink Activity.exe
   build-windows-7:
-    runs-on: windows-latest
+    runs-on: windows-2019
     name: Build for Windows 7 (Python 3.8.18)
     steps:
       - uses: actions/checkout@v4
