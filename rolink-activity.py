@@ -81,7 +81,7 @@ def get_name_by_api(callsign):
         response_json = response.json()
         if response_json.get("fname"):
             talker_name = response_json.get("fname")
-            return talker_name
+            return talker_name.capitalize()
         else:
             return ""  # Return an empty string if 'fname' is not in the response
     except Exception as e:
