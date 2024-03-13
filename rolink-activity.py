@@ -227,6 +227,10 @@ class TalkerGUI:
         else:
             base_call_sign = talker_call_sign.split('-')[0]
 
+        # Special handling for "EchoLink-X" to extract the caller ID
+        if "EchoLink-X" in base_call_sign:
+            base_call_sign = base_call_sign.split('(')[-1].split(')')[0]
+
         # Lookup the name using the base call sign
         full_name = self.call_signs.get(base_call_sign, "")
         talker_name = self.format_name(full_name, base_call_sign)
