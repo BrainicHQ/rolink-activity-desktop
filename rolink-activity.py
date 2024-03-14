@@ -15,7 +15,7 @@ import requests
 import re
 import time
 
-current_version = "0.0.12"  # Update this with each new release
+current_version = "0.0.13"  # Update this with each new release
 
 
 def version_greater_than(v1, v2):
@@ -222,6 +222,7 @@ class TalkerGUI:
         # If the talker is ZelloLink, use the last Zello callsign
         if talker_call_sign == "ZelloLink" and self.last_zello_call_sign:
             base_call_sign = self.last_zello_call_sign.split('-')[0]
+            talker_call_sign = f"{base_call_sign} via {talker_call_sign}"
             # Reset the last Zello call sign
             self.last_zello_call_sign = None
         else:
@@ -229,7 +230,9 @@ class TalkerGUI:
 
         # Special handling for "EchoLink-X" to extract the caller ID
         if "EchoLink-X" in base_call_sign:
-            base_call_sign = base_call_sign.split('(')[-1].split(')')[0]
+            extracted_call_sign = talker_call_sign.split('(')[-1].split(')')[0]
+            base_call_sign = extracted_call_sign
+            talker_call_sign = f"{extracted_call_sign} via {talker_call_sign}"
 
         # Lookup the name using the base call sign
         full_name = self.call_signs.get(base_call_sign, "")
@@ -248,7 +251,7 @@ class TalkerGUI:
         # Insert the talker only if they are the current talker, including their active time as a talker
         if is_current:
             # Include the name in the display
-            display_text = f"{talker_call_sign} ({talker_name}) ({timestamp})"
+            display_text = f"{talker_call_sign} ({talker_name}) [{timestamp}]"
             self.talkers.insert(0, display_text)
 
         # Keep only the latest 100 talkers
