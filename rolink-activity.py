@@ -15,7 +15,7 @@ import requests
 import re
 import time
 
-current_version = "0.0.14"  # Update this with each new release
+current_version = "0.0.15"  # Update this with each new release
 
 
 def version_greater_than(v1, v2):
@@ -222,11 +222,14 @@ class TalkerGUI:
         # Determine base call sign
         if talker_call_sign == "ZelloLink" and self.last_zello_call_sign:
             base_call_sign = self.last_zello_call_sign.split('-')[0]
+            current_talker = self.last_zello_call_sign + " via ZelloLink"
         elif "EchoLink-X" in talker_call_sign:
             extracted_call_sign = talker_call_sign.split('(')[-1].split(')')[0]
             base_call_sign = extracted_call_sign.split('-')[0]
+            current_talker = extracted_call_sign + " via EchoLink"
         else:
             base_call_sign = talker_call_sign.split('-')[0]
+            current_talker = talker_call_sign
 
         # Lookup the name using the base call sign
         full_name = self.call_signs.get(base_call_sign, "")
@@ -237,9 +240,7 @@ class TalkerGUI:
 
         if is_current:
             # Mark the current talker with a red emoji
-            talker_call_sign = "🔴 " + talker_call_sign
-            # Include the name in the display and insert at the beginning
-            display_text = f"{talker_call_sign.capitalize()} ({talker_name}) [{timestamp}]"
+            display_text = f"🔴 {current_talker.upper()} ({talker_name}) [{timestamp}]"
             self.talkers.insert(0, display_text)
             # Remove the placeholder if it exists
             if "Așteptând vorbăreți 🎙️" in self.talkers:
