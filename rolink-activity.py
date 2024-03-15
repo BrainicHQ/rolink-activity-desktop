@@ -124,7 +124,7 @@ class TalkerGUI:
         self.talkers = []  # List to keep track of the latest 100 talkers
         callbook_path = resource_path('callbook.csv')  # Adjusted to use the resource_path function
         self.call_signs = load_call_signs(callbook_path)  # Load call signs from file
-        self.last_zello_call_sign = None # Keep track of the last Zello call sign for ZelloLink
+        self.last_zello_call_sign = None  # Keep track of the last Zello call sign for ZelloLink
         # https://www.ancom.ro/radioamatori_2899
         # Set a placeholder while waiting for the first talker
         self.talkers.insert(0, "Așteptând vorbăreți 🎙️")
@@ -219,44 +219,36 @@ class TalkerGUI:
         timestamp_ms = talker_data.get('s', 0)
         timestamp = datetime.fromtimestamp(timestamp_ms / 1000).strftime('%H:%M:%S')
 
-        # If the talker is ZelloLink, use the last Zello callsign
+        # Determine base call sign
         if talker_call_sign == "ZelloLink" and self.last_zello_call_sign:
             base_call_sign = self.last_zello_call_sign.split('-')[0]
-            talker_call_sign = f"{base_call_sign} via {talker_call_sign}"
-            # Reset the last Zello call sign
-            self.last_zello_call_sign = None
-        else:
-            base_call_sign = talker_call_sign.split('-')[0]
-
-        # Special handling for "EchoLink-X" to extract the caller ID
-        if "EchoLink-X" in base_call_sign:
+        elif "EchoLink-X" in talker_call_sign:
             extracted_call_sign = talker_call_sign.split('(')[-1].split(')')[0]
             base_call_sign = extracted_call_sign.split('-')[0]
-            talker_call_sign = f"{extracted_call_sign} via EchoLink"
+        else:
+            base_call_sign = talker_call_sign.split('-')[0]
 
         # Lookup the name using the base call sign
         full_name = self.call_signs.get(base_call_sign, "")
         talker_name = self.format_name(full_name, base_call_sign)
 
+        # Remove the red emoji from all existing talkers in the list first
+        self.talkers = [call_sign.replace("🔴 ", "") for call_sign in self.talkers]
+
         if is_current:
             # Mark the current talker with a red emoji
             talker_call_sign = "🔴 " + talker_call_sign
-
+            # Include the name in the display and insert at the beginning
+            display_text = f"{talker_call_sign.capitalize()} ({talker_name}) [{timestamp}]"
+            self.talkers.insert(0, display_text)
+            # Remove the placeholder if it exists
             if "Așteptând vorbăreți 🎙️" in self.talkers:
                 self.talkers.remove("Așteptând vorbăreți 🎙️")
-
-        # Remove the red emoji from all existing talkers in the list
-        self.talkers = [call_sign.replace("🔴 ", "") for call_sign in self.talkers]
-
-        # Insert the talker only if they are the current talker, including their active time as a talker
-        if is_current:
-            # Include the name in the display
-            display_text = f"{talker_call_sign} ({talker_name}) [{timestamp}]"
-            self.talkers.insert(0, display_text)
 
         # Keep only the latest 100 talkers
         self.talkers = self.talkers[:100]
 
+        # Update UI listbox with the talkers list
         self.listbox.delete(0, tk.END)
         for talker in self.talkers:
             self.listbox.insert(tk.END, talker)
