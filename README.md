@@ -12,6 +12,8 @@ activi în rețea, marcându-i pe cei actuali cu un indicator vizual distinct.
 
 [<img src="preview.jpg" width="70%"/>](preview.jpg)
 
+Utilitarul este dezvoltat de **YO6SAY**, și este oferit în mod gratuit comunității radioamatorilor.
+
 ## Funcționalități
 
 - Conectare în timp real la serviciul RoLink folosind WebSocket.
@@ -62,7 +64,7 @@ Contribuțiile sunt binevenite! Dacă doriți să contribuiți la acest proiect,
 
 ## Suport
 
-Pentru întrebări sau suport, vă rugăm să deschideți o problemă în secțiunea Issues a repository-ului GitHub.
+Pentru întrebări sau suport, vă rugăm să deschideți un subiect în [secțiunea de discuții](https://github.com/BrainicHQ/rolink-activity-desktop/discussions) a repository-ului.
 
 ## Mulțumiri
 
