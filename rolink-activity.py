@@ -15,7 +15,7 @@ import requests
 import re
 import time
 
-current_version = "0.0.15"  # Update this with each new release
+current_version = "0.0.16"  # Update this with each new release
 
 
 def version_greater_than(v1, v2):
@@ -122,6 +122,8 @@ class TalkerGUI:
     def __init__(self, root):
         self.root = root
         self.talkers = []  # List to keep track of the latest 100 talkers
+        self.current_talker_starting_time = 0  # Keep track of the starting time of the current talker
+        self.current_talker_base_call_sign = None  # Keep track of the base call sign of the current talker
         callbook_path = resource_path('callbook.csv')  # Adjusted to use the resource_path function
         self.call_signs = load_call_signs(callbook_path)  # Load call signs from file
         self.last_zello_call_sign = None  # Keep track of the last Zello call sign for ZelloLink
@@ -142,7 +144,7 @@ class TalkerGUI:
         self.footer_frame.pack(fill=tk.X, side=tk.BOTTOM, pady=5)
 
         # Clickable copyright label
-        self.copyright_label = tk.Label(self.footer_frame, text="© 2024 Silviu - Brainic.io", fg="darkgray",
+        self.copyright_label = tk.Label(self.footer_frame, text="© 2024 Silviu YO6SAY - Brainic.io", fg="darkgray",
                                         cursor="hand2",
                                         anchor="center")
 
@@ -160,7 +162,7 @@ class TalkerGUI:
 
     def set_window_size(self):
         # Explicitly setting the window size; adjust as needed
-        self.root.geometry('300x250')  # Adjust width and height as needed
+        self.root.geometry('320x250')  # Adjust width and height as needed
 
     def position_window_top_right(self):
         # Position the window in the top right of the screen
@@ -242,9 +244,21 @@ class TalkerGUI:
             # Mark the current talker with a red emoji
             display_text = f"🔴 {current_talker.upper()} ({talker_name}) [{timestamp}]"
             self.talkers.insert(0, display_text)
+            self.current_talker_starting_time = timestamp_ms
+            self.current_talker_base_call_sign = base_call_sign
             # Remove the placeholder if it exists
             if "Așteptând vorbăreți 🎙️" in self.talkers:
                 self.talkers.remove("Așteptând vorbăreți 🎙️")
+        else:
+            # If the current talker is the same as the previous one, set the TX duration
+            if self.current_talker_base_call_sign == base_call_sign and self.current_talker_starting_time != 0:
+                # Set the TX duration for the current talker in mm:ss format
+                current_talker_tx_duration = timestamp_ms - self.current_talker_starting_time
+                minutes, seconds = divmod(current_talker_tx_duration // 1000, 60)
+                display_text = f"{current_talker.upper()} ({talker_name}) [{timestamp}] ({minutes:02d}:{seconds:02d})"
+                self.talkers[0] = display_text
+                # Reset the current talker starting time to 0
+                self.current_talker_starting_time = 0
 
         # Keep only the latest 100 talkers
         self.talkers = self.talkers[:100]
@@ -259,7 +273,7 @@ class TalkerGUI:
 def on_message(ws, message, gui):
     try:
         data = json.loads(message)
-        if "talker" in data:
+        if "talker" in data and data["talker"].get("c"):
             gui.update_talkers(data['talker'])
         elif "zello" in data and data["zello"].get("command") == "on_stream_start":
             gui.last_zello_call_sign = data["zello"].get("from")
