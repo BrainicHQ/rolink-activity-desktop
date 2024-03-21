@@ -270,6 +270,32 @@ class TalkerGUI:
         self.root.update_idletasks()
 
 
+def toggle_node_status(connect_data):
+    """
+    Set the node status based on the connect data received from the WebSocket. If the node is offline, add an emoji (⛔)
+    to the talker's call sign. If the node is online, remove the emoji. This function is called when a connect message
+    is received from the WebSocket.
+    :param connect_data: The connect data received from the WebSocket.
+    """
+    node_call_sign = connect_data.get('c')
+    node_status = connect_data.get('j')
+    # search the node_call_sign in the list of talkers and add an emoji (⛔) to it if is offline
+    if node_status == 0:
+        gui.talkers = [call_sign.replace(f"{node_call_sign.upper()} ", f"⛔ {node_call_sign.upper()} ") for call_sign in
+                       gui.talkers]
+        gui.listbox.delete(0, tk.END)
+        for talker in gui.talkers:
+            gui.listbox.insert(tk.END, talker)
+        gui.root.update_idletasks()
+    else:  # remove the emoji (⛔) from the talker's call sign if the node is online
+        gui.talkers = [call_sign.replace(f"⛔ {node_call_sign.upper()} ", f"{node_call_sign.upper()} ") for call_sign in
+                       gui.talkers]
+        gui.listbox.delete(0, tk.END)
+        for talker in gui.talkers:
+            gui.listbox.insert(tk.END, talker)
+        gui.root.update_idletasks()
+
+
 def on_message(ws, message, gui):
     try:
         data = json.loads(message)
@@ -277,6 +303,8 @@ def on_message(ws, message, gui):
             gui.update_talkers(data['talker'])
         elif "zello" in data and data["zello"].get("command") == "on_stream_start":
             gui.last_zello_call_sign = data["zello"].get("from")
+        elif "connect" in data and data["connect"].get("j"):
+            toggle_node_status(data["connect"])
     except Exception as e:
         print(f"Error processing message: {e}")
 
